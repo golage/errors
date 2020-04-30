@@ -20,7 +20,7 @@ jobs:
       run: go mod download
 
     - name: Running tests
-      run: go test -v .
+      run: go test -v -cover -coverprofile=coverage.out ./...
     
     - name: Coverage
       env: 
