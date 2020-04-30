@@ -1,2 +1,2 @@
 # errors
-simple and useful errors package in golang
+Simple and useful errors package in Golang
