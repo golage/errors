@@ -21,3 +21,9 @@ jobs:
 
     - name: Running tests
       run: go test -v .
+    
+    - name: Coverage
+      env: 
+        CODECOV_TOKEN: 69834835-9abf-42f6-bf32-bd93f878b9ca
+      run: bash <(curl -s https://codecov.io/bash)
+    
