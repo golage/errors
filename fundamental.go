@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/golage/errors/codes"
 	"github.com/golage/errors/stacktrace"
 )
 
@@ -18,7 +17,7 @@ type Fundamental interface {
 	error
 
 	// returns error code
-	Code() codes.Code
+	Code() Code
 
 	// return error message
 	Message() string
@@ -28,7 +27,7 @@ type Fundamental interface {
 }
 
 type fundamental struct {
-	code       codes.Code
+	code       Code
 	message    string
 	stackTrace stacktrace.StackTrace
 }
@@ -38,12 +37,12 @@ func (err fundamental) Marshal() string {
 }
 
 func (err *fundamental) Unmarshal(message string) {
-	err.code = codes.Unknown
+	err.code = Unknown
 	err.message = message
 	matches := regex.FindStringSubmatch(message)
 	if len(matches) == 3 {
 		if code, e := strconv.Atoi(matches[1]); e == nil {
-			err.code = codes.Code(code)
+			err.code = Code(code)
 			err.message = matches[2]
 		}
 	}
@@ -53,7 +52,7 @@ func (err fundamental) Error() string {
 	return err.Marshal()
 }
 
-func (err fundamental) Code() codes.Code {
+func (err fundamental) Code() Code {
 	return err.code
 }
 
