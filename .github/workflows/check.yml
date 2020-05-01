@@ -1,6 +1,6 @@
-name: Go
+name: Check
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   check:
@@ -20,10 +20,5 @@ jobs:
       run: go mod download
 
     - name: Running tests
-      run: go test -v -cover -coverprofile=coverage.out ./...
-    
-    - name: Coverage
-      env: 
-        CODECOV_TOKEN: 69834835-9abf-42f6-bf32-bd93f878b9ca
-      run: bash <(curl -s https://codecov.io/bash)
+      run: go test -v ./...
     
