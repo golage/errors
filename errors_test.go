@@ -22,12 +22,12 @@ func TestNew(t *testing.T) {
 		{
 			name: "must returns fundamental with message",
 			args: args{
-				code:    Internal,
+				code:    CodeInternal,
 				message: "text message",
 				args:    nil,
 			},
 			want: &fundamental{
-				code:       Internal,
+				code:       CodeInternal,
 				message:    "text message",
 				stackTrace: stacktrace.Capture(0),
 			},
@@ -35,37 +35,37 @@ func TestNew(t *testing.T) {
 		{
 			name: "must returns fundamental with template and args",
 			args: args{
-				code:    NotFound,
+				code:    CodeNotFound,
 				message: "%v message",
 				args:    []interface{}{"text"},
 			},
 			want: &fundamental{
-				code:       NotFound,
+				code:       CodeNotFound,
 				message:    "text message",
 				stackTrace: stacktrace.Capture(0),
 			},
 		},
 		{
-			name: "must returns fundamental with unknown instead of nil code",
+			name: "must returns nil with nil code",
 			args: args{
-				code:    Nil,
+				code:    CodeNil,
 				message: "text message",
 				args:    nil,
 			},
-			want: &fundamental{
-				code:       Unknown,
-				message:    "text message",
-				stackTrace: stacktrace.Capture(0),
-			},
+			want: nil,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := New(tt.args.code, tt.args.message, tt.args.args...)
-			assert.Equal(t, err.Error(), tt.want.Error())
-			assert.Equal(t, err.Message(), tt.want.Message())
-			assert.Equal(t, int(err.Code()), int(tt.want.Code()))
-			assert.Equal(t, err.StackTrace()[1:], tt.want.StackTrace()[1:])
+			if tt.want == nil {
+				assert.Equal(t, err, nil)
+			} else {
+				assert.Equal(t, err.Error(), tt.want.Error())
+				assert.Equal(t, err.Message(), tt.want.Message())
+				assert.Equal(t, int(err.Code()), int(tt.want.Code()))
+				assert.Equal(t, err.StackTrace()[1:], tt.want.StackTrace()[1:])
+			}
 		})
 	}
 }
@@ -90,37 +90,37 @@ func TestParse(t *testing.T) {
 			},
 			wants: wants{
 				err: &fundamental{
-					code:    Unknown,
+					code:    CodeUnknown,
 					message: "text message",
 				},
-				code: Unknown,
+				code: CodeUnknown,
 			},
 		},
 		{
 			name: "must returns fundamental from built-in with fundamental marshal",
 			args: args{
-				err: fmt.Errorf("error %d: %v", AlreadyExists, "text message"),
+				err: fmt.Errorf("error %d: %v", CodeAlreadyExists, "text message"),
 			},
 			wants: wants{
 				err: &fundamental{
-					code:    AlreadyExists,
+					code:    CodeAlreadyExists,
 					message: "text message",
 				},
-				code: AlreadyExists,
+				code: CodeAlreadyExists,
 			},
 		},
 		{
 			name: "must returns fundamental from fundamental",
 			args: args{
-				err: New(Unauthenticated, "text message"),
+				err: New(CodeUnauthenticated, "text message"),
 			},
 			wants: wants{
 				err: &fundamental{
-					code:       Unauthenticated,
+					code:       CodeUnauthenticated,
 					message:    "text message",
 					stackTrace: stacktrace.Capture(0),
 				},
-				code: Unauthenticated,
+				code: CodeUnauthenticated,
 			},
 		},
 		{
@@ -130,25 +130,25 @@ func TestParse(t *testing.T) {
 			},
 			wants: wants{
 				err: &fundamental{
-					code:       Unknown,
+					code:       CodeUnknown,
 					message:    "text message",
 					stackTrace: stacktrace.Capture(0),
 				},
-				code: Unknown,
+				code: CodeUnknown,
 			},
 		},
 		{
 			name: "must returns fundamental from pkg-error with fundamental marshal",
 			args: args{
-				err: errors.Errorf("error %d: %v", NotFound, "text message"),
+				err: errors.Errorf("error %d: %v", CodeNotFound, "text message"),
 			},
 			wants: wants{
 				err: &fundamental{
-					code:       NotFound,
+					code:       CodeNotFound,
 					message:    "text message",
 					stackTrace: stacktrace.Capture(0),
 				},
-				code: NotFound,
+				code: CodeNotFound,
 			},
 		},
 		{
@@ -158,7 +158,7 @@ func TestParse(t *testing.T) {
 			},
 			wants: wants{
 				err:  nil,
-				code: Nil,
+				code: CodeNil,
 			},
 		},
 	}
@@ -196,7 +196,7 @@ func TestWrap(t *testing.T) {
 			name: "must returns nil with nil cause",
 			args: args{
 				cause:   nil,
-				code:    PermissionDenied,
+				code:    CodePermissionDenied,
 				message: "text message",
 			},
 			want: nil,
@@ -205,11 +205,11 @@ func TestWrap(t *testing.T) {
 			name: "must returns wrapped built-in error with message",
 			args: args{
 				cause:   fmt.Errorf("error"),
-				code:    Unimplemented,
+				code:    CodeUnimplemented,
 				message: "text message",
 			},
 			want: &fundamental{
-				code:       Unimplemented,
+				code:       CodeUnimplemented,
 				message:    "text message: error",
 				stackTrace: stacktrace.Capture(0),
 			},
@@ -218,12 +218,12 @@ func TestWrap(t *testing.T) {
 			name: "must returns wrapped built-in error with template and args",
 			args: args{
 				cause:   fmt.Errorf("error"),
-				code:    Unauthenticated,
+				code:    CodeUnauthenticated,
 				message: "%v message",
 				args:    []interface{}{"text"},
 			},
 			want: &fundamental{
-				code:       Unauthenticated,
+				code:       CodeUnauthenticated,
 				message:    "text message: error",
 				stackTrace: stacktrace.Capture(0),
 			},
@@ -231,28 +231,24 @@ func TestWrap(t *testing.T) {
 		{
 			name: "must returns wrapped fundamental with new code",
 			args: args{
-				cause:   New(PermissionDenied, "error"),
-				code:    InvalidData,
+				cause:   New(CodePermissionDenied, "error"),
+				code:    CodeInvalidData,
 				message: "text message",
 			},
 			want: &fundamental{
-				code:       InvalidData,
+				code:       CodeInvalidData,
 				message:    "text message: error",
 				stackTrace: stacktrace.Capture(0),
 			},
 		},
 		{
-			name: "must returns wrapped error with unknown instead of nil code",
+			name: "must returns nil with nil code",
 			args: args{
 				cause:   fmt.Errorf("error"),
-				code:    Nil,
+				code:    CodeNil,
 				message: "text message",
 			},
-			want: &fundamental{
-				code:       Unknown,
-				message:    "text message: error",
-				stackTrace: stacktrace.Capture(0),
-			},
+			want: nil,
 		},
 	}
 	for _, tt := range tests {
