@@ -13,8 +13,8 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	switch err, code := errors.Parse(something1()); code {
-	case errors.Nil:
-	case errors.NotFound:
+	case errors.CodeNil:
+	case errors.CodeNotFound:
 		log.Fatalf("can not something1: %v", err)
 	default:
 		log.Fatalf("can not something1: %v\n%v", err, err.StackTrace())
@@ -30,9 +30,9 @@ func main() {
 func something1() error {
 	switch n := rand.Intn(3); n {
 	case 0:
-		return errors.New(errors.NotFound, "something1 not found with %v", n)
+		return errors.New(errors.CodeNotFound, "something1 not found with %v", n)
 	case 1:
-		return errors.Wrap(pkg.New("can not connect to db"), errors.Internal, "something1 with %v", n)
+		return errors.Wrap(pkg.New("can not connect to db"), errors.CodeInternal, "something1 with %v", n)
 	default:
 		return nil
 	}
@@ -41,7 +41,7 @@ func something1() error {
 func something2() error {
 	switch n := rand.Intn(2); n {
 	case 0:
-		return errors.New(errors.AlreadyExists, "something2 already exists")
+		return errors.New(errors.CodeAlreadyExists, "something2 already exists")
 	default:
 		return nil
 	}
