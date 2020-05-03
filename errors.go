@@ -5,10 +5,10 @@ import (
 	"github.com/golage/errors/stacktrace"
 )
 
-// create new fundamental error
+// New returns new instance fundamental error with args
 func New(code Code, message string, args ...interface{}) Fundamental {
-	if code == Nil {
-		code = Unknown
+	if code == CodeNil {
+		return nil
 	}
 	return &fundamental{
 		code:       code,
@@ -17,14 +17,14 @@ func New(code Code, message string, args ...interface{}) Fundamental {
 	}
 }
 
-// wrap existing error with fundamental error
+// Wrap returns new instance fundamental error with args from error cause
 func Wrap(cause error, code Code, message string, args ...interface{}) Fundamental {
 	parsed, _ := Parse(cause)
 	if parsed == nil {
 		return nil
 	}
-	if code == Nil {
-		code = Unknown
+	if code == CodeNil {
+		return nil
 	}
 	fnd := &fundamental{
 		code:       code,
@@ -37,11 +37,11 @@ func Wrap(cause error, code Code, message string, args ...interface{}) Fundament
 	return fnd
 }
 
-// parse any errors to fundamental error
+// Parse returns fundamental error and code from all of error types
 func Parse(err error) (Fundamental, Code) {
 	switch err := err.(type) {
 	case nil:
-		return nil, Nil
+		return nil, CodeNil
 	case Fundamental:
 		return err, err.Code()
 	case stackTracer:
