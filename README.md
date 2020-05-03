@@ -23,19 +23,19 @@ import "github.com/golage/errors"
 ```
 Create error instance:
 ```go
-errors.New(errors.NotFound, "somethings")
-errors.New(errors.NotFound, "somethings %v", 123)
+errors.New(errors.CodeNotFound, "somethings")
+errors.New(errors.CodeNotFound, "somethings %v", 123)
 ```
 Wrap existing error:
 ```go
-errors.Wrap(err, errors.Internal, "somethings")
-errors.Wrap(err, errors.Internal, "somethings %v", 123)
+errors.Wrap(err, errors.CodeInternal, "somethings")
+errors.Wrap(err, errors.CodeInternal, "somethings %v", 123)
 ```
 Handle error:
 ```go
 switch err, code := errors.Parse(err); code {
-case errors.Nil:
-case errors.NotFound:
+case errors.CodeNil:
+case errors.CodeNotFound:
     log.Fatalf("not found: %v", err)
 default:
     log.Fatalf("others: %v\n%v", err, err.StackTrace())
