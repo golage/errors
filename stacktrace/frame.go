@@ -5,20 +5,20 @@ import (
 	"runtime"
 )
 
-// implements of caller pointer
+// Frame implements of caller pointer
 type Frame uintptr
 
-// returns pointer number
+// PC returns frame caller pointer
 func (f Frame) PC() uintptr {
 	return uintptr(f) - 1
 }
 
-// returns true if frame pointer has a source function
+// IsValid returns true if frame has source function
 func (f Frame) IsValid() bool {
 	return runtime.FuncForPC(f.PC()) != nil
 }
 
-// returns function name
+// Name returns frame function name
 func (f Frame) Name() string {
 	fn := runtime.FuncForPC(f.PC())
 	if fn == nil {
@@ -27,7 +27,7 @@ func (f Frame) Name() string {
 	return fn.Name()
 }
 
-// return function source line
+// Source returns function source line
 func (f Frame) Source() string {
 	fn := runtime.FuncForPC(f.PC())
 	if fn == nil {
@@ -37,7 +37,7 @@ func (f Frame) Source() string {
 	return fmt.Sprintf("%v:%v", file, line)
 }
 
-// returns frame as a string
+// String returns frame string marshal
 func (f Frame) String() string {
 	fn := runtime.FuncForPC(f.PC())
 	if fn == nil {
