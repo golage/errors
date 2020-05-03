@@ -1,0 +1,25 @@
+name: Doc
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  doc:
+    name: Doc
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Setup Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.13
+      id: go
+
+    - name: Making request to proxy
+      run: curl https://proxy.golang.org/github.com/golage/errors/@v/${GITHUB_REF/refs\/tags\//}.info
+
+    - name: Downloading the package
+      run: GOPROXY="https://proxy.golang.org" GO111MODULE=on go get github.com/golage/errors@${GITHUB_REF/refs\/tags\//}
+

@@ -12,24 +12,24 @@ var (
 	regex = regexp.MustCompile("error ([0-9]*): (.*)")
 )
 
-// interface of fundamental errors
+// Fundamental interface of fundamental error
 type Fundamental interface {
 	error
 
-	// returns error code
+	// Code returns error code
 	Code() Code
 
-	// return error message
+	// Message returns error message
 	Message() string
 
-	// return error stacktrace
-	StackTrace() stacktrace.StackTrace
+	// Stacktrace returns error stacktrace
+	StackTrace() stacktrace.Stacktrace
 }
 
 type fundamental struct {
 	code       Code
 	message    string
-	stackTrace stacktrace.StackTrace
+	stackTrace stacktrace.Stacktrace
 }
 
 func (err fundamental) Marshal() string {
@@ -37,7 +37,7 @@ func (err fundamental) Marshal() string {
 }
 
 func (err *fundamental) Unmarshal(message string) {
-	err.code = Unknown
+	err.code = CodeUnknown
 	err.message = message
 	matches := regex.FindStringSubmatch(message)
 	if len(matches) == 3 {
@@ -60,6 +60,6 @@ func (err fundamental) Message() string {
 	return err.message
 }
 
-func (err fundamental) StackTrace() stacktrace.StackTrace {
+func (err fundamental) StackTrace() stacktrace.Stacktrace {
 	return err.stackTrace
 }

@@ -9,11 +9,11 @@ const (
 	depth = 32
 )
 
-// implement stacktrace as array of frames
-type StackTrace []Frame
+// Stacktrace implements is array of frames
+type Stacktrace []Frame
 
-// marshal stacktrace as a string
-func (st StackTrace) String() string {
+// String returns stacktrace marshal string
+func (st Stacktrace) String() string {
 	var trace []string
 	for _, frame := range st {
 		trace = append(trace, frame.String())
@@ -21,12 +21,12 @@ func (st StackTrace) String() string {
 	return strings.Join(trace, "\n")
 }
 
-// capture stacktrace of current line
-func Capture(skip int) StackTrace {
+// Capture returns stacktrace of current line from skip
+func Capture(skip int) Stacktrace {
 	var pcs [depth]uintptr
 	n := runtime.Callers(2+skip, pcs[:])
 
-	var trace StackTrace
+	var trace Stacktrace
 	for _, pc := range pcs[0:n] {
 		frame := Frame(pc)
 		if !frame.IsValid() {

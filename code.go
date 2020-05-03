@@ -1,34 +1,33 @@
 package errors
 
-// implements of error code number,
-// you can extends this with define constants as code type
+// Code implements error code number, you can extends this with define constants with this type
 type Code uint
 
 const (
-	// nil error object, can not create error with this code
-	Nil Code = 0
+	// CodeNil means no error exists
+	CodeNil Code = iota
 
-	// unimplemented source code
-	Unimplemented Code = 1
+	// CodeUnimplemented means code does not implemented
+	CodeUnimplemented
 
-	// unknown error raised
-	Unknown Code = 2
+	// CodeUnknown means unknown error raised
+	CodeUnknown
 
-	// internal server error raised
-	Internal Code = 3
+	// CodeInternal means internal module returns error
+	CodeInternal
 
-	// unauthenticated user request
-	Unauthenticated Code = 4
+	// CodeUnauthenticated means user does not authenticated
+	CodeUnauthenticated
 
-	// user access permission denied
-	PermissionDenied Code = 5
+	// CodePermissionDenied means user does not have access permissions
+	CodePermissionDenied
 
-	// invalid data o parameters
-	InvalidData Code = 6
+	// CodeInvalidData means input parameters are invalid
+	CodeInvalidData
 
-	// data not found
-	NotFound Code = 7
+	// CodeNotFound means there is no data found
+	CodeNotFound
 
-	// same data is already exists
-	AlreadyExists Code = 8
+	// CodeAlreadyExists means there is same data is already exists
+	CodeAlreadyExists
 )

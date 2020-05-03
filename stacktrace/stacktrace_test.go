@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-func getStacktrace() StackTrace {
-	var st StackTrace
+func getStacktrace() Stacktrace {
+	var st Stacktrace
 	var pcs [depth]uintptr
 	n := runtime.Callers(0, pcs[:])
 	for _, pc := range pcs[0:n] {
@@ -31,7 +31,7 @@ func TestCapture(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want StackTrace
+		want Stacktrace
 	}{
 		{
 			name: "must returns frames of after 0 skip",

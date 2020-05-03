@@ -1,2 +1,2 @@
-// this package is implements for capture stacktrace of errors
+// Package stacktrace is implements for capture errors stacktrace
 package stacktrace
