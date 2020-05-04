@@ -1,4 +1,4 @@
-# Golage errors handling ![https://github.com/golage/errors](https://godoc.org/github.com/golage/errors?status.svg) ![https://github.com/golage/errors](https://github.com/golage/errors/workflows/Go/badge.svg) ![https://github.com/golage/errors](https://codecov.io/gh/golage/errors/branch/master/graph/badge.svg)
+# Golage errors handling ![https://github.com/golage/errors](https://godoc.org/github.com/golage/errors?status.svg) ![https://github.com/golage/errors](https://github.com/golage/errors/workflows/Check/badge.svg) ![https://github.com/golage/errors](https://codecov.io/gh/golage/errors/branch/master/graph/badge.svg)
 Simple and useful error handling package in Golang
 
 ## Features
