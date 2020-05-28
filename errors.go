@@ -37,6 +37,26 @@ func Wrap(cause error, code Code, message string, args ...interface{}) Fundament
 	return fnd
 }
 
+// Cast returns new instance fundamental error with error cause and code
+func Cast(err error, code Code) Fundamental {
+	parsed, _ := Parse(err)
+	if parsed == nil {
+		return nil
+	}
+	if code == CodeNil {
+		return nil
+	}
+	fnd := &fundamental{
+		code:       code,
+		message:    parsed.Message(),
+		stackTrace: parsed.StackTrace(),
+	}
+	if fnd.stackTrace == nil {
+		fnd.stackTrace = stacktrace.Capture(1)
+	}
+	return fnd
+}
+
 // Parse returns fundamental error and code from all of error types
 func Parse(err error) (Fundamental, Code) {
 	switch err := err.(type) {
