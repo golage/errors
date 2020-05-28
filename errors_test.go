@@ -267,3 +267,71 @@ func TestWrap(t *testing.T) {
 		})
 	}
 }
+
+func TestCast(t *testing.T) {
+	type args struct {
+		err  error
+		code Code
+	}
+	tests := []struct {
+		name string
+		args args
+		want Fundamental
+	}{
+		{
+			name: "must returns nil with nil err",
+			args: args{
+				err:  nil,
+				code: CodePermissionDenied,
+			},
+			want: nil,
+		},
+		{
+			name: "must returns nil with nil code",
+			args: args{
+				err:  fmt.Errorf("error"),
+				code: CodeNil,
+			},
+			want: nil,
+		},
+		{
+			name: "must returns fundamental from built-in error",
+			args: args{
+				err:  fmt.Errorf("error"),
+				code: CodeUnimplemented,
+			},
+			want: &fundamental{
+				code:       CodeUnimplemented,
+				message:    "error",
+				stackTrace: stacktrace.Capture(0),
+			},
+		},
+		{
+			name: "must returns fundamental from fundamental error with new code",
+			args: args{
+				err:  New(CodeAlreadyExists, "error"),
+				code: CodeUnimplemented,
+			},
+			want: &fundamental{
+				code:       CodeUnimplemented,
+				message:    "error",
+				stackTrace: stacktrace.Capture(0),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := Cast(tt.args.err, tt.args.code)
+			if tt.want == nil {
+				assert.Equal(t, err, nil)
+			} else {
+				assert.Equal(t, err.Error(), tt.want.Error())
+				assert.Equal(t, err.Message(), tt.want.Message())
+				assert.Equal(t, int(err.Code()), int(tt.want.Code()))
+				if tt.want.StackTrace() != nil {
+					assert.Equal(t, err.StackTrace()[1:], tt.want.StackTrace()[1:])
+				}
+			}
+		})
+	}
+}
